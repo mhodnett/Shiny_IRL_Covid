@@ -8,29 +8,46 @@
 #
 
 library(shiny)
+library(shinydashboard)
+library(dplyr)
+library(ggplot2)
+library(DT)
 
-# Define UI for application that draws a histogram
-shinyUI(fluidPage(
+source("globals.R", local=TRUE)
 
-    # Application title
-    titlePanel("Covid Tracker"),
-
-    # Sidebar with a slider input for number of bins
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("dateSelect",
-                        "Dates:",
-                        min = as.Date("01/03/2020","%d/%m/%Y"),
-                        max = as.Date("13/03/2021","%d/%m/%Y"),
-                        value=as.Date("13/03/2021","%d/%m/%Y"),
-                        timeFormat="%d/%m/%Y",
-                        animate =
-                            animationOptions(interval = 2000))
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-            plotOutput("mapPlot")
+ui <- dashboardPage(
+    dashboardHeader(title = "Covid dashboard"),
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem("Map", tabName = "map", icon = icon("map"))
         )
+    ),
+    dashboardBody(
+        
+        tabItems(
+            # First tab content
+            tabItem(tabName = "map",
+                    
+                    fluidRow(
+                        box(width=4,
+                            title = "Controls",
+                            sliderInput("dateSelect",
+                                        "Select a date:",
+                                        min = as.Date(min(cases$Date),"%Y/%m/%d"),
+                                        max = as.Date(max(cases$Date),"%Y/%m/%d"),
+                                        value = as.Date(max(cases$Date),"%Y/%m/%d"),
+                                        timeFormat = "%d/%m/%Y",
+                                        animate=animationOptions(interval=2000)
+                            )
+                        ),
+                        box(width=8,
+                            plotOutput("mapPlot",height=580,width=480))
+                    )
+            )
+            
+            
+            
+        )
+        
     )
-))
+)
