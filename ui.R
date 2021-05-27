@@ -19,7 +19,8 @@ ui <- dashboardPage(
     dashboardHeader(title = "Covid dashboard"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Map", tabName = "map", icon = icon("map"))
+            menuItem("Map", tabName = "map", icon = icon("map")),
+            menuItem("Data", tabName = "data", icon = icon("th"))
         )
     ),
     dashboardBody(
@@ -27,26 +28,41 @@ ui <- dashboardPage(
         tabItems(
             # First tab content
             tabItem(tabName = "map",
-                    
+        
+            fluidRow(
+                box(width=4,
+                    title = "Controls",
+                    sliderInput("dateSelect",
+                                "Select a date:",
+                                min = as.Date(min(cases$Date),"%Y/%m/%d"),
+                                max = as.Date(max(cases$Date),"%Y/%m/%d"),
+                                value = as.Date(max(cases$Date),"%Y/%m/%d"),
+                                timeFormat = "%d/%m/%Y",
+                                animate=animationOptions(interval=2000)
+                    ),
+                    tags$div(class = "header", checked = NA,
+                             tags$hr(),
+                             tags$p("Covid cases per county. Select a date from above and press the 'Play' button to see the animation!"),
+                             tags$a(href = "https://data.gov.ie/dataset/covid19countystatisticshpscireland1", paste0("Data source, last updated - ",max(cases$Date)))
+                    )
+                ),
+                box(width=8,
+                    plotOutput("mapPlot",height=580,width=480))
+            )
+            ),
+            
+            # First tab content
+            tabItem(tabName = "data",
                     fluidRow(
                         box(width=4,
                             title = "Controls",
-                            sliderInput("dateSelect",
-                                        "Select a date:",
-                                        min = as.Date(min(cases$Date),"%Y/%m/%d"),
-                                        max = as.Date(max(cases$Date),"%Y/%m/%d"),
-                                        value = as.Date(max(cases$Date),"%Y/%m/%d"),
-                                        timeFormat = "%d/%m/%Y",
-                                        animate=animationOptions(interval=2000)
-                            )
-                        ),
-                        box(width=8,
-                            plotOutput("mapPlot",height=580,width=480))
+                            selectInput("county","County:",counties)
+                        )
+                    ),
+                    fluidRow(width=12,
+                        DTOutput("countyTable")
                     )
-            )
-            
-            
-            
+                    )
         )
         
     )

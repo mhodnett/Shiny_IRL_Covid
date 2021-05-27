@@ -18,7 +18,7 @@ cases$previous_value <- NULL
 # replace all NA's with zeros
 cases[is.na(cases)] <- 0
 # create new field with cases per 1000 population
-cases$Cases100KPop <- 100000*cases$ConfirmedCovidCases / cases$PopulationCensus16
+cases$Cases100KPop <- round(100000*cases$ConfirmedCovidCases / cases$PopulationCensus16,2)
 
 cases$TimeStamp <- paste(substr(cases$TimeStamp,9,10),
                          substr(cases$TimeStamp,6,7),

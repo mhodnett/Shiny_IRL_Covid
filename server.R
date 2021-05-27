@@ -33,5 +33,14 @@ shinyServer(function(input, output) {
             theme_void()+
             theme(plot.title = element_text(hjust = 1.0)) # needed to center plot title
     })
+    
+    output$countyTable=renderDT({
+        print(input$county)
+        county_cases <- cases[cases$id==input$county,c("id","Date","ConfirmedCovidCases","Cases100KPop")]
+        county_cases$TimeStamp <-NULL
+        colnames(county_cases)[1] = "County"
+        county_cases %>% 
+            arrange(desc(Date))
+    })
 
 })
